@@ -60,9 +60,21 @@ function gravarLancamento(lancamento) {
     localStorage.setItem('lancamentos', JSON.stringify(lancamentos))
 }
 
+function editarRegistro(numeroRegistro){
+    lancamentos = getLancamentos()
+    $.each(lancamentos, function (index) {
+        if (this.codigo == numeroRegistro) {
+            $("input[name=form-data]").val(this.data)
+            $("input[name=form-descricao]").val(this.descricao)
+            $("input[name=form-valor]").val(this.valor)
+        }
+    })
+}
+
 function montarBotaoAcoes(registro, obj) {
     let acoes = `
-    <button  type="button" class="btn btn-warning btn-sm btn-edit-lancamento" 
+    <button onclick="editarRegistro(${registro})" type="button" 
+    class="btn btn-warning btn-sm btn-edit-lancamento" 
     data-toggle="modal" data-target="#modal-form-lancamento">
     <i class="fas fa-edit"></i>
     </button>
