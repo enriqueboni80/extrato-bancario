@@ -4,7 +4,7 @@ let numeroRegistro
 let lancamentos = []
 let lancamento
 let retornoLancamentos
-let id = 0
+let novoID = 0
 
 
 function soma(valor) {
@@ -48,10 +48,10 @@ function getLancamentos() {
     return lancamentos
 }
 
-function setId() {
-    id = localStorage.getItem("last_id")
-    id++
-    localStorage.setItem("last_id", id)
+function setNovoId() {
+    novoID = localStorage.getItem("last_id")
+    novoID++
+    localStorage.setItem("last_id", novoID)
 }
 
 function gravarLancamento(lancamento) {
@@ -125,12 +125,14 @@ function enviarForm() {
     $("#btn-enviar-form").click(function () {
         numeroRegistro = $("input[name=form-id]").val()
 
+        alert(numeroRegistro)
+
         if (numeroRegistro == "") {
-            setId()
+            setNovoId()
             numeroRegistro = localStorage.getItem("last_id")
             lancamento = {
                 data: $('input[name=form-data]').val(),
-                codigo: id,
+                codigo: novoID,
                 descricao: $('input[name=form-descricao]').val(),
                 valor: parseFloat($('input[name=form-valor]').val())
             }
@@ -138,7 +140,6 @@ function enviarForm() {
         }
 
         else {
-            alert('aqui')
             lancamentos = getLancamentos()
             $.each(lancamentos, function (index) {
                 if (this.codigo == numeroRegistro) {

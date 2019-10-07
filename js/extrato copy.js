@@ -2,8 +2,9 @@ let total = 0
 let valor = 0
 let numeroRegistro
 let lancamentos = []
+let lancamento
 let retornoLancamentos
-let id = 0
+let novoId = 0
 
 
 function soma(valor) {
@@ -29,46 +30,100 @@ function getNumRegistro(obj) {
 }
 
 function deletarRegistro(numeroRegistro) {
-    alert(numeroRegistro)
+    lancamentos = getLancamentos()
+    $.each(lancamentos, function (index) {
+        if (this.codigo == numeroRegistro) {
+            lancamentos.splice(index, 1)
+            localStorage.setItem('lancamentos', JSON.stringify(lancamentos))
+        }
+    })
+    montarTabelaNaTela()
 }
 
 function getLancamentos() {
-    return JSON.parse(localStorage.getItem('lancamentos'))
-}
-
-function setId() {
-    id = localStorage.getItem("last_id")
-    id++
-    localStorage.setItem("last_id", id)
-}
-
-function gravarLancamento(lancamento) {
-    lancamentos = getLancamentos()
+    lancamentos = JSON.parse(localStorage.getItem('lancamentos'))
     if (lancamentos == null) {
-        lancamentos = []
+        return lancamentos = []
+    }
+    return lancamentos
+}
+
+function setNovoId() {
+    novoId = localStorage.getItem("last_id")
+    novoId++
+    localStorage.setItem("last_id", novoId)
+}
+
+function gravarNovoLancamento(lancamento) {
+
+    setNovoId()
+    lancamentos = getLancamentos()
+    numeroRegistro = localStorage.getItem("last_id")
+    lancamento = {
+        data: $('input[name=form-data]').val(),
+        codigo: novoId,
+        descricao: $('input[name=form-descricao]').val(),
+        valor: parseFloat($('input[name=form-valor]').val())
     }
     lancamentos.push(lancamento)
     localStorage.setItem('lancamentos', JSON.stringify(lancamentos))
 }
 
+function editarRegistro(numeroRegistro) {
+    getInformacaoRegistroProForm(numeroRegistro)
+}
+
+
+function getInformacaoRegistroProForm() {
+    lancamentos = getLancamentos()
+    $.each(lancamentos, function (index) {
+        if (this.codigo == numeroRegistro) {
+            $("input[name=form-id]").val(this.codigo)
+            $("input[name=form-data]").val(this.data)
+            $("input[name=form-descricao]").val(this.descricao)
+            $("input[name=form-valor]").val(this.valor)
+        }
+    })
+}
+
+function gravarLancamentoEditado() {
+    lancamentos = getLancamentos()
+    $.each(lancamentos, function (index) {
+        if (this.codigo == numeroRegistro) {
+            lancamento = {
+                data: $('input[name=form-data]').val(),
+                codigo: numeroRegistro,
+                descricao: $('input[name=form-descricao]').val(),
+                valor: parseFloat($('input[name=form-valor]').val())
+            }
+            lancamentos[index] = lancamento
+        }
+    })
+    localStorage.setItem('lancamentos', JSON.stringify(lancamentos))
+}
+
+
 function montarBotaoAcoes(registro, obj) {
     let acoes = `
-    <button  type="button" class="btn btn-warning btn-sm btn-edit-lancamento" 
+    <button onclick="editarRegistro(${registro})" type="button" 
+    class="btn btn-warning btn-sm btn-edit-lancamento" 
     data-toggle="modal" data-target="#modal-form-lancamento">
     <i class="fas fa-edit"></i>
     </button>
 
-    <button onclick="deletarRegistro(${registro})" type="button" class="btn btn-danger btn-sm btn-delete-lancamento">
+    <button onclick="deletarRegistro(${registro})" type="button" 
+    class="btn btn-danger btn-sm btn-delete-lancamento">
     <i class="fas fa-eraser"></i>
     </button >
     `
     obj.find('.acoes').html(acoes)
 }
 
-function montarTabelaNaTela(retornoLancamentos) {
+function montarTabelaNaTela() {
+    retornoLancamentos = getLancamentos()
     //limpar a tela extrato
     $("#extrato").html("")
-    $.each(retornoLancamentos, function() {
+    $.each(retornoLancamentos, function () {
         $("#extrato").append(
             `<tr class='extrato-item'>
                <td>${this.data}</td>
@@ -80,13 +135,14 @@ function montarTabelaNaTela(retornoLancamentos) {
             </tr>`
         )
     })
+    main()
 }
 
 
 function main() {
     total = 0
     valor = 0
-    $(".extrato-item").each(function() {
+    $(".extrato-item").each(function () {
         valor = getValor($(this))
         numeroRegistro = getNumRegistro($(this))
         VerificaSeEhNegativo(valor, $(this))
@@ -97,25 +153,19 @@ function main() {
 }
 
 function enviarForm() {
-    let lancamento
-    $("#btn-enviar-form").click(function() {
-        setId()
-        lancamento = {
-            data: $('input[name=form-data]').val(),
-            codigo: id,
-            descricao: $('input[name=form-descricao]').val(),
-            valor: parseFloat($('input[name=form-valor]').val())
+    $("#btn-enviar-form").click(function () {
+        numeroRegistro = $("input[name=form-id]").val()
+        if (numeroRegistro == "") {
+            gravarNovoLancamento()
         }
-        gravarLancamento(lancamento)
-        retornoLancamentos = getLancamentos()
-        montarTabelaNaTela(retornoLancamentos)
-        main()
+        else {
+            gravarLancamentoEditado()
+        }
+        montarTabelaNaTela()
     })
 }
 
-$(document).ready(function() {
-    retornoLancamentos = getLancamentos();
-    montarTabelaNaTela(retornoLancamentos)
-    main();
+$(document).ready(function () {
+    montarTabelaNaTela();
     enviarForm();
 })
