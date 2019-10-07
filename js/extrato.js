@@ -30,13 +30,14 @@ function getNumRegistro(obj) {
 }
 
 function deletarRegistro(numeroRegistro) {
-    //console.log(getLancamentos())
     lancamentos = getLancamentos()
-    $.each(lancamentos, function() {
+    $.each(lancamentos, function (index) {
         if (this.codigo == numeroRegistro) {
-            console.log(this)
+            lancamentos.splice(index, 1)
+            localStorage.setItem('lancamentos', JSON.stringify(lancamentos))
         }
     })
+    montarTabelaNaTela()
 }
 
 function getLancamentos() {
@@ -66,17 +67,19 @@ function montarBotaoAcoes(registro, obj) {
     <i class="fas fa-edit"></i>
     </button>
 
-    <button onclick="deletarRegistro(${registro})" type="button" class="btn btn-danger btn-sm btn-delete-lancamento">
+    <button onclick="deletarRegistro(${registro})" type="button" 
+    class="btn btn-danger btn-sm btn-delete-lancamento">
     <i class="fas fa-eraser"></i>
     </button >
     `
     obj.find('.acoes').html(acoes)
 }
 
-function montarTabelaNaTela(retornoLancamentos) {
+function montarTabelaNaTela() {
+    retornoLancamentos = getLancamentos()
     //limpar a tela extrato
     $("#extrato").html("")
-    $.each(retornoLancamentos, function() {
+    $.each(retornoLancamentos, function () {
         $("#extrato").append(
             `<tr class='extrato-item'>
                <td>${this.data}</td>
@@ -88,13 +91,14 @@ function montarTabelaNaTela(retornoLancamentos) {
             </tr>`
         )
     })
+    main()
 }
 
 
 function main() {
     total = 0
     valor = 0
-    $(".extrato-item").each(function() {
+    $(".extrato-item").each(function () {
         valor = getValor($(this))
         numeroRegistro = getNumRegistro($(this))
         VerificaSeEhNegativo(valor, $(this))
@@ -105,7 +109,7 @@ function main() {
 }
 
 function enviarForm() {
-    $("#btn-enviar-form").click(function() {
+    $("#btn-enviar-form").click(function () {
         setId()
         lancamento = {
             data: $('input[name=form-data]').val(),
@@ -114,15 +118,11 @@ function enviarForm() {
             valor: parseFloat($('input[name=form-valor]').val())
         }
         gravarLancamento(lancamento)
-        retornoLancamentos = getLancamentos()
-        montarTabelaNaTela(retornoLancamentos)
-        main()
+        montarTabelaNaTela()
     })
 }
 
-$(document).ready(function() {
-    retornoLancamentos = getLancamentos();
-    montarTabelaNaTela(retornoLancamentos)
-    main();
+$(document).ready(function () {
+    montarTabelaNaTela();
     enviarForm();
 })
