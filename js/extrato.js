@@ -29,6 +29,19 @@ function getNumRegistro(obj) {
     return parseInt(obj.find('.numero-registro').html());
 }
 
+function limparForm() {
+    $("#btn-novo-lancamento").click(function () {
+        $("input[name=form-id]").val('')
+        $("input[name=form-data]").val('')
+        $("input[name=form-descricao]").val('')
+        $("input[name=form-valor]").val('')
+    })
+}
+
+function acaoBotaoNovo() {
+    limparForm()
+}
+
 function deletarRegistro(numeroRegistro) {
     lancamentos = getLancamentos()
     $.each(lancamentos, function (index) {
@@ -54,8 +67,16 @@ function setNovoId() {
     localStorage.setItem("last_id", novoID)
 }
 
-function gravarLancamento(lancamento) {
+function gravarNovoLancamento(lancamento) {
     lancamentos = getLancamentos()
+    setNovoId()
+    numeroRegistro = localStorage.getItem("last_id")
+    lancamento = {
+        data: $('input[name=form-data]').val(),
+        codigo: novoID,
+        descricao: $('input[name=form-descricao]').val(),
+        valor: parseFloat($('input[name=form-valor]').val())
+    }
     lancamentos.push(lancamento)
     localStorage.setItem('lancamentos', JSON.stringify(lancamentos))
 }
@@ -70,6 +91,22 @@ function editarRegistro(numeroRegistro) {
             $("input[name=form-valor]").val(this.valor)
         }
     })
+}
+
+function gravarEdicaoLancamento() {
+    lancamentos = getLancamentos()
+    $.each(lancamentos, function (index) {
+        if (this.codigo == numeroRegistro) {
+            lancamento = {
+                data: $('input[name=form-data]').val(),
+                codigo: numeroRegistro,
+                descricao: $('input[name=form-descricao]').val(),
+                valor: parseFloat($('input[name=form-valor]').val())
+            }
+            lancamentos[index] = lancamento
+        }
+    })
+    localStorage.setItem('lancamentos', JSON.stringify(lancamentos))
 }
 
 function montarBotaoAcoes(registro, obj) {
@@ -107,7 +144,6 @@ function montarTabelaNaTela() {
     main()
 }
 
-
 function main() {
     total = 0
     valor = 0
@@ -124,41 +160,18 @@ function main() {
 function enviarForm() {
     $("#btn-enviar-form").click(function () {
         numeroRegistro = $("input[name=form-id]").val()
-
-        alert(numeroRegistro)
-
         if (numeroRegistro == "") {
-            setNovoId()
-            numeroRegistro = localStorage.getItem("last_id")
-            lancamento = {
-                data: $('input[name=form-data]').val(),
-                codigo: novoID,
-                descricao: $('input[name=form-descricao]').val(),
-                valor: parseFloat($('input[name=form-valor]').val())
-            }
-            gravarLancamento(lancamento)
+            gravarNovoLancamento()
         }
-
         else {
-            lancamentos = getLancamentos()
-            $.each(lancamentos, function (index) {
-                if (this.codigo == numeroRegistro) {
-                    lancamento = {
-                        data: $('input[name=form-data]').val(),
-                        codigo: numeroRegistro,
-                        descricao: $('input[name=form-descricao]').val(),
-                        valor: parseFloat($('input[name=form-valor]').val())
-                    }
-                    lancamentos[index] = lancamento
-                }
-            })
-            localStorage.setItem('lancamentos', JSON.stringify(lancamentos))
+            gravarEdicaoLancamento()
         }
         montarTabelaNaTela()
     })
 }
 
 $(document).ready(function () {
+    acaoBotaoNovo()
     montarTabelaNaTela();
     enviarForm();
 })

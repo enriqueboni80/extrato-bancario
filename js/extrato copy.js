@@ -4,7 +4,7 @@ let numeroRegistro
 let lancamentos = []
 let lancamento
 let retornoLancamentos
-let novoId = 0
+let novoID = 0
 
 
 function soma(valor) {
@@ -29,6 +29,19 @@ function getNumRegistro(obj) {
     return parseInt(obj.find('.numero-registro').html());
 }
 
+function limparForm() {
+    $("#btn-novo-lancamento").click(function () {
+        $("input[name=form-id]").val('')
+        $("input[name=form-data]").val('')
+        $("input[name=form-descricao]").val('')
+        $("input[name=form-valor]").val('')
+    })
+}
+
+function acaoBotaoNovo() {
+    limparForm()
+}
+
 function deletarRegistro(numeroRegistro) {
     lancamentos = getLancamentos()
     $.each(lancamentos, function (index) {
@@ -49,19 +62,18 @@ function getLancamentos() {
 }
 
 function setNovoId() {
-    novoId = localStorage.getItem("last_id")
-    novoId++
-    localStorage.setItem("last_id", novoId)
+    novoID = localStorage.getItem("last_id")
+    novoID++
+    localStorage.setItem("last_id", novoID)
 }
 
 function gravarNovoLancamento(lancamento) {
-
-    setNovoId()
     lancamentos = getLancamentos()
+    setNovoId()
     numeroRegistro = localStorage.getItem("last_id")
     lancamento = {
         data: $('input[name=form-data]').val(),
-        codigo: novoId,
+        codigo: novoID,
         descricao: $('input[name=form-descricao]').val(),
         valor: parseFloat($('input[name=form-valor]').val())
     }
@@ -70,11 +82,6 @@ function gravarNovoLancamento(lancamento) {
 }
 
 function editarRegistro(numeroRegistro) {
-    getInformacaoRegistroProForm(numeroRegistro)
-}
-
-
-function getInformacaoRegistroProForm() {
     lancamentos = getLancamentos()
     $.each(lancamentos, function (index) {
         if (this.codigo == numeroRegistro) {
@@ -86,7 +93,7 @@ function getInformacaoRegistroProForm() {
     })
 }
 
-function gravarLancamentoEditado() {
+function gravarEdicaoLancamento() {
     lancamentos = getLancamentos()
     $.each(lancamentos, function (index) {
         if (this.codigo == numeroRegistro) {
@@ -101,7 +108,6 @@ function gravarLancamentoEditado() {
     })
     localStorage.setItem('lancamentos', JSON.stringify(lancamentos))
 }
-
 
 function montarBotaoAcoes(registro, obj) {
     let acoes = `
@@ -138,7 +144,6 @@ function montarTabelaNaTela() {
     main()
 }
 
-
 function main() {
     total = 0
     valor = 0
@@ -159,13 +164,14 @@ function enviarForm() {
             gravarNovoLancamento()
         }
         else {
-            gravarLancamentoEditado()
+            gravarEdicaoLancamento()
         }
         montarTabelaNaTela()
     })
 }
 
 $(document).ready(function () {
+    acaoBotaoNovo()
     montarTabelaNaTela();
     enviarForm();
 })
