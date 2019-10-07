@@ -60,10 +60,11 @@ function gravarLancamento(lancamento) {
     localStorage.setItem('lancamentos', JSON.stringify(lancamentos))
 }
 
-function editarRegistro(numeroRegistro){
+function editarRegistro(numeroRegistro) {
     lancamentos = getLancamentos()
     $.each(lancamentos, function (index) {
         if (this.codigo == numeroRegistro) {
+            $("input[name=form-id]").val(this.codigo)
             $("input[name=form-data]").val(this.data)
             $("input[name=form-descricao]").val(this.descricao)
             $("input[name=form-valor]").val(this.valor)
@@ -122,14 +123,36 @@ function main() {
 
 function enviarForm() {
     $("#btn-enviar-form").click(function () {
-        setId()
-        lancamento = {
-            data: $('input[name=form-data]').val(),
-            codigo: id,
-            descricao: $('input[name=form-descricao]').val(),
-            valor: parseFloat($('input[name=form-valor]').val())
+        numeroRegistro = $("input[name=form-id]").val()
+
+        if (numeroRegistro == "") {
+            setId()
+            numeroRegistro = localStorage.getItem("last_id")
+            lancamento = {
+                data: $('input[name=form-data]').val(),
+                codigo: id,
+                descricao: $('input[name=form-descricao]').val(),
+                valor: parseFloat($('input[name=form-valor]').val())
+            }
+            gravarLancamento(lancamento)
         }
-        gravarLancamento(lancamento)
+
+        else {
+            alert('aqui')
+            lancamentos = getLancamentos()
+            $.each(lancamentos, function (index) {
+                if (this.codigo == numeroRegistro) {
+                    lancamento = {
+                        data: $('input[name=form-data]').val(),
+                        codigo: numeroRegistro,
+                        descricao: $('input[name=form-descricao]').val(),
+                        valor: parseFloat($('input[name=form-valor]').val())
+                    }
+                    lancamentos[index] = lancamento
+                }
+            })
+            localStorage.setItem('lancamentos', JSON.stringify(lancamentos))
+        }
         montarTabelaNaTela()
     })
 }
