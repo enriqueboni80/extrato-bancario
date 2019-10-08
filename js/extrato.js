@@ -67,12 +67,27 @@ function setNovoId() {
     localStorage.setItem("last_id", novoID)
 }
 
+function converteDataParaIngles(data) {
+    let dataString
+    dataString = data.split("/")
+    return new Date(dataString[2], dataString[1] - 1, dataString[0])
+}
+
+function converteDataParaPortugues(data){
+    let dataString
+    let dia
+    dataString = data.split("-")
+    dia = dataString[2].split("T")[0]
+    return dia+'/'+dataString[1]+'/'+dataString[0]
+}
+
 function gravarNovoLancamento(lancamento) {
+
     lancamentos = getLancamentos()
     setNovoId()
     //numeroRegistro = localStorage.getItem("last_id")
     lancamento = {
-        data: $('input[name=form-data]').val(),
+        data: converteDataParaIngles($('input[name=form-data]').val()),
         codigo: novoID,
         descricao: $('input[name=form-descricao]').val(),
         valor: parseFloat($('input[name=form-valor]').val())
@@ -86,7 +101,7 @@ function editarRegistro(numeroRegistro) {
     $.each(lancamentos, function (index) {
         if (this.codigo == numeroRegistro) {
             $("input[name=form-id]").val(this.codigo)
-            $("input[name=form-data]").val(this.data)
+            $("input[name=form-data]").val(converteDataParaPortugues(this.data))
             $("input[name=form-descricao]").val(this.descricao)
             $("input[name=form-valor]").val(this.valor)
         }
@@ -98,7 +113,7 @@ function gravarEdicaoLancamento() {
     $.each(lancamentos, function (index) {
         if (this.codigo == numeroRegistro) {
             lancamento = {
-                data: $('input[name=form-data]').val(),
+                data: converteDataParaIngles($('input[name=form-data]').val()),
                 codigo: numeroRegistro,
                 descricao: $('input[name=form-descricao]').val(),
                 valor: parseFloat($('input[name=form-valor]').val())
@@ -134,7 +149,7 @@ function montarTabelaNaTela(lancamentos = null) {
     $.each(retornoLancamentos, function () {
         $("#extrato").append(
             `<tr class='extrato-item'>
-               <td>${this.data}</td>
+               <td>${converteDataParaPortugues(this.data)}</td>
                 <td class="numero-registro">${this.codigo}</td>
                 <td>${this.descricao}</td>
                 <td class="valor">${this.valor}</td>
