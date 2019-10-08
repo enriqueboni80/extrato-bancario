@@ -176,13 +176,19 @@ $(document).ready(function () {
     acaoBotaoNovo()
     montarTabelaNaTela()
     enviarForm()
-    ordernarArray()
+    //ordernarArray('asc', 'valor')
 })
 
-function ordernarArray(tipo) {
+function ordernarArray(tipo, campo) {
     lancamentos = getLancamentos()
     $("#btn-ordenar-array").click(function () {
-        lancamentos.sort(function (a, b) { return b.codigo - a.codigo });
+        lancamentos.sort(function (a, b) {
+            if (tipo == 'asc') {
+                return b[campo] - a[campo]
+            } else if (tipo == "desc") {
+                return a[campo] - b[campo]
+            }
+        });
         montarTabelaNaTela(lancamentos)
     })
 }
