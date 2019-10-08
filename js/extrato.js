@@ -180,7 +180,6 @@ $(document).ready(function () {
 })
 
 function ordernarArray() {
-
     let tipoOrdenacao
     let campo
     lancamentos = getLancamentos()
@@ -195,5 +194,10 @@ function ordernarArray() {
             }
         });
         montarTabelaNaTela(lancamentos)
+        if (tipoOrdenacao == "desc") {
+            $(this).attr('data-order', "asc")
+        } else {
+            $(this).attr('data-order', "desc")
+        }
     })
 }
