@@ -176,12 +176,17 @@ $(document).ready(function () {
     acaoBotaoNovo()
     montarTabelaNaTela()
     enviarForm()
-    //ordernarArray('asc', 'valor')
+    ordernarArray()
 })
 
-function ordernarArray(tipo, campo) {
+function ordernarArray() {
+    
+    let tipo = "asc"
+    let campo
+    
     lancamentos = getLancamentos()
-    $("#btn-ordenar-array").click(function () {
+    $(".ordenar-array").click(function () {
+        campo = $(this).attr('data-type')
         lancamentos.sort(function (a, b) {
             if (tipo == 'asc') {
                 return b[campo] - a[campo]
