@@ -70,7 +70,7 @@ function setNovoId() {
 function gravarNovoLancamento(lancamento) {
     lancamentos = getLancamentos()
     setNovoId()
-    numeroRegistro = localStorage.getItem("last_id")
+    //numeroRegistro = localStorage.getItem("last_id")
     lancamento = {
         data: $('input[name=form-data]').val(),
         codigo: novoID,
@@ -125,8 +125,10 @@ function montarBotaoAcoes(registro, obj) {
     obj.find('.acoes').html(acoes)
 }
 
-function montarTabelaNaTela() {
-    retornoLancamentos = getLancamentos()
+function montarTabelaNaTela(lancamentos = null) {
+
+    retornoLancamentos = ((lancamentos == null) ? getLancamentos() : lancamentos)
+
     //limpar a tela extrato
     $("#extrato").html("")
     $.each(retornoLancamentos, function () {
@@ -172,6 +174,15 @@ function enviarForm() {
 
 $(document).ready(function () {
     acaoBotaoNovo()
-    montarTabelaNaTela();
-    enviarForm();
+    montarTabelaNaTela()
+    enviarForm()
+    ordernarArray()
 })
+
+function ordernarArray(tipo) {
+    lancamentos = getLancamentos()
+    $("#btn-ordenar-array").click(function () {
+        lancamentos.sort(function (a, b) { return b.codigo - a.codigo });
+        montarTabelaNaTela(lancamentos)
+    })
+}
