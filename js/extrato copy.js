@@ -70,7 +70,7 @@ function setNovoId() {
 function gravarNovoLancamento(lancamento) {
     lancamentos = getLancamentos()
     setNovoId()
-    numeroRegistro = localStorage.getItem("last_id")
+    //numeroRegistro = localStorage.getItem("last_id")
     lancamento = {
         data: $('input[name=form-data]').val(),
         codigo: novoID,
@@ -125,8 +125,10 @@ function montarBotaoAcoes(registro, obj) {
     obj.find('.acoes').html(acoes)
 }
 
-function montarTabelaNaTela() {
-    retornoLancamentos = getLancamentos()
+function montarTabelaNaTela(lancamentos = null) {
+
+    retornoLancamentos = ((lancamentos == null) ? getLancamentos() : lancamentos)
+
     //limpar a tela extrato
     $("#extrato").html("")
     $.each(retornoLancamentos, function () {
@@ -172,6 +174,30 @@ function enviarForm() {
 
 $(document).ready(function () {
     acaoBotaoNovo()
-    montarTabelaNaTela();
-    enviarForm();
+    montarTabelaNaTela()
+    enviarForm()
+    ordernarArray()
 })
+
+function ordernarArray() {
+    let tipoOrdenacao
+    let campo
+    lancamentos = getLancamentos()
+    $(".ordenar-array").click(function () {
+        campo = $(this).attr('data-type')
+        tipoOrdenacao = $(this).attr('data-order')
+        lancamentos.sort(function (a, b) {
+            if (tipoOrdenacao == 'asc') {
+                return b[campo] - a[campo]
+            } else if (tipoOrdenacao == "desc") {
+                return a[campo] - b[campo]
+            }
+        });
+        montarTabelaNaTela(lancamentos)
+        if (tipoOrdenacao == "desc") {
+            $(this).attr('data-order', "asc")
+        } else {
+            $(this).attr('data-order', "desc")
+        }
+    })
+}
