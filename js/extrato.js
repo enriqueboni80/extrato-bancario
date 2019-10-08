@@ -180,17 +180,17 @@ $(document).ready(function () {
 })
 
 function ordernarArray() {
-    
-    let tipo = "asc"
+
+    let tipoOrdenacao
     let campo
-    
     lancamentos = getLancamentos()
     $(".ordenar-array").click(function () {
         campo = $(this).attr('data-type')
+        tipoOrdenacao = $(this).attr('data-order')
         lancamentos.sort(function (a, b) {
-            if (tipo == 'asc') {
+            if (tipoOrdenacao == 'asc') {
                 return b[campo] - a[campo]
-            } else if (tipo == "desc") {
+            } else if (tipoOrdenacao == "desc") {
                 return a[campo] - b[campo]
             }
         });
