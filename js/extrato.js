@@ -89,6 +89,33 @@ function converteDataParaPortugues(data) {
     return dia + '/' + dataString[1] + '/' + dataString[0]
 }
 
+
+function limparFormErros() {
+    $('input[name=form-descricao]').removeClass('form-error')
+    $('input[name=form-valor]').removeClass('form-error')
+    $('input[name=form-data]').removeClass('form-error')
+    $('input[name=form-descricao]').next().remove()
+    $('input[name=form-valor]').next().remove()
+    $('input[name=form-data]').next().remove()
+}
+
+function imprimirErroValidacaoNoFormulario(errosValidacao) {
+
+    limparFormErros()
+    if (errosValidacao.descricao) {
+        $('input[name=form-descricao]').addClass('form-error')
+        $('input[name=form-descricao]').after('<p> *Esse campo não pode ser vazio</p>')
+    }
+    if (errosValidacao.valor) {
+        $('input[name=form-valor]').addClass('form-error')
+        $('input[name=form-valor]').after('<p> *Esse campo precisa ser numério</p>')
+    }
+    if (errosValidacao.data) {
+        $('input[name=form-data]').addClass('form-error')
+        $('input[name=form-data]').after('<p> *A data precisa ser válida</p>')
+    }
+}
+
 function validaLancamento(lancamento) {
     let errosValidacao = []
     if (lancamento.descricao.isEmpty()) {
@@ -101,8 +128,10 @@ function validaLancamento(lancamento) {
         errosValidacao.data = "data Inválida"
     }
     if (Object.keys(errosValidacao).length > 0) {
+        imprimirErroValidacaoNoFormulario(errosValidacao)
         return false
     }
+    limparFormErros()
     return true
 }
 

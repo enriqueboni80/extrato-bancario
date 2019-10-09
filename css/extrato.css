@@ -1,3 +1,7 @@
 .ordenar-array{
     cursor: pointer;
 }
+
+.form-error{
+    border-color: red
+}
