@@ -199,14 +199,14 @@ function ordernarArray() {
     let tipoCampo
     lancamentos = getLancamentos()
     $(".ordenar-array").click(function () {
-        campo = $(this).attr('data-type')
+        tipoCampo = $(this).attr('data-type')
         tipoOrdenacao = $(this).attr('data-order')
         lancamentos.sort(function (a, b) {
-            let campoA = a[campo]
-            let campoB = b[campo]
+            let campoA = a[tipoCampo]
+            let campoB = b[tipoCampo]
             if (tipoCampo == "data") {
-                campoA = new Date(a[campo]).getTime()
-                campoB = new Date(b[campo]).getTime()
+                campoA = new Date(a[tipoCampo]).getTime()
+                campoB = new Date(b[tipoCampo]).getTime()
             }
             if (tipoOrdenacao == 'asc') {
                 return campoB - campoA
