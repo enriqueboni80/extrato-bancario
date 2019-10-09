@@ -146,7 +146,9 @@ function gravarEdicaoLancamento() {
             lancamentos[index] = lancamento
         }
     })
-    localStorage.setItem('lancamentos', JSON.stringify(lancamentos))
+    if (validaLancamento(lancamento)) {
+        localStorage.setItem('lancamentos', JSON.stringify(lancamentos))
+    }
 }
 
 function montarBotaoAcoes(registro, obj) {
