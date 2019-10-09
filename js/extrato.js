@@ -6,6 +6,14 @@ let lancamento
 let retornoLancamentos
 let novoID = 0
 
+String.prototype.isEmpty = function () {
+    return (this.length === 0 || !this.trim());
+};
+
+Date.prototype.isValid = function () {
+    return !(this == "Invalid Date") ? true : false
+};
+
 
 function soma(valor) {
     return total += valor
@@ -81,19 +89,36 @@ function converteDataParaPortugues(data) {
     return dia + '/' + dataString[1] + '/' + dataString[0]
 }
 
-function gravarNovoLancamento(lancamento) {
+function validaLancamento(lancamento) {
+    let errosValidacao = []
+    if (lancamento.descricao.isEmpty()) {
+        errosValidacao.descricao = 'A descrição não pode estar vazia'
+    }
+    if (isNaN(lancamento.valor)) {
+        errosValidacao.valor = 'O valor Precisa ser numérico'
+    }
+    if (!(lancamento.data.isValid())) {
+        errosValidacao.data = "data Inválida"
+    }
+    if (Object.keys(errosValidacao).length > 0) {
+        return false
+    }
+    return true
+}
 
+function gravarNovoLancamento(lancamento) {
     lancamentos = getLancamentos()
     setNovoId()
-    //numeroRegistro = localStorage.getItem("last_id")
     lancamento = {
         data: converteDataParaIngles($('input[name=form-data]').val()),
         codigo: novoID,
         descricao: $('input[name=form-descricao]').val(),
         valor: parseFloat($('input[name=form-valor]').val())
     }
-    lancamentos.push(lancamento)
-    localStorage.setItem('lancamentos', JSON.stringify(lancamentos))
+    if (validaLancamento(lancamento)) {
+        lancamentos.push(lancamento)
+        localStorage.setItem('lancamentos', JSON.stringify(lancamentos))
+    }
 }
 
 function editarRegistro(numeroRegistro) {
