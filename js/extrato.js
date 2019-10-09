@@ -196,7 +196,7 @@ $(document).ready(function () {
 
 function ordernarArray() {
     let tipoOrdenacao
-    let campo
+    let tipoCampo
     lancamentos = getLancamentos()
     $(".ordenar-array").click(function () {
         campo = $(this).attr('data-type')
@@ -204,7 +204,7 @@ function ordernarArray() {
         lancamentos.sort(function (a, b) {
             let campoA = a[campo]
             let campoB = b[campo]
-            if (campo == "data") {
+            if (tipoCampo == "data") {
                 campoA = new Date(a[campo]).getTime()
                 campoB = new Date(b[campo]).getTime()
             }
