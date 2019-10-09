@@ -201,35 +201,31 @@ function ordernarArray() {
     $(".ordenar-array").click(function () {
         campo = $(this).attr('data-type')
         tipoOrdenacao = $(this).attr('data-order')
+        lancamentos.sort(function (a, b) {
+            let campoA = a[campo]
+            let campoB = b[campo]
+            if (campo == "data") {
+                campoA = new Date(a[campo]).getTime()
+                campoB = new Date(b[campo]).getTime()
+            }
+            if (tipoOrdenacao == 'asc') {
+                return campoB - campoA
+            } else if (tipoOrdenacao == "desc") {
+                return campoA - campoB
+            }
+        });
 
-        if (campo == "data") {
-            lancamentos.sort(function (a, b) {
-                let dataA = new Date(a[campo]).getTime()
-                let dataB = new Date(b[campo]).getTime()
-
-                if (tipoOrdenacao == 'asc') {
-                    return dataB - dataA
-                } else if (tipoOrdenacao == "desc") {
-                    return dataA - dataB
-                }
-
-            });
-        }
-        else {
-            lancamentos.sort(function (a, b) {
-                if (tipoOrdenacao == 'asc') {
-                    return b[campo] - a[campo]
-                } else if (tipoOrdenacao == "desc") {
-                    return a[campo] - b[campo]
-                }
-            });
-        }
-
-        montarTabelaNaTela(lancamentos)
-        if (tipoOrdenacao == "desc") {
-            $(this).attr('data-order', "asc")
-        } else {
+        if (tipoOrdenacao == 'asc') {
             $(this).attr('data-order', "desc")
+            $(this.childNodes)
+                .removeClass("fa-arrow-alt-circle-down")
+                .addClass("fa-arrow-alt-circle-up")
+        } else {
+            $(this).attr('data-order', "asc")
+            $(this.childNodes)
+                .removeClass("fa-arrow-alt-circle-up")
+                .addClass("fa-arrow-alt-circle-down")
         }
+        montarTabelaNaTela(lancamentos)
     })
 }
