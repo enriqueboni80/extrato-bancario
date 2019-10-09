@@ -73,12 +73,12 @@ function converteDataParaIngles(data) {
     return new Date(dataString[2], dataString[1] - 1, dataString[0])
 }
 
-function converteDataParaPortugues(data){
+function converteDataParaPortugues(data) {
     let dataString
     let dia
     dataString = data.split("-")
     dia = dataString[2].split("T")[0]
-    return dia+'/'+dataString[1]+'/'+dataString[0]
+    return dia + '/' + dataString[1] + '/' + dataString[0]
 }
 
 function gravarNovoLancamento(lancamento) {
@@ -201,13 +201,30 @@ function ordernarArray() {
     $(".ordenar-array").click(function () {
         campo = $(this).attr('data-type')
         tipoOrdenacao = $(this).attr('data-order')
-        lancamentos.sort(function (a, b) {
-            if (tipoOrdenacao == 'asc') {
-                return b[campo] - a[campo]
-            } else if (tipoOrdenacao == "desc") {
-                return a[campo] - b[campo]
-            }
-        });
+
+        if (campo == "data") {
+            lancamentos.sort(function (a, b) {
+                let dataA = new Date(a[campo]).getTime()
+                let dataB = new Date(b[campo]).getTime()
+
+                if (tipoOrdenacao == 'asc') {
+                    return dataB - dataA
+                } else if (tipoOrdenacao == "desc") {
+                    return dataA - dataB
+                }
+
+            });
+        }
+        else {
+            lancamentos.sort(function (a, b) {
+                if (tipoOrdenacao == 'asc') {
+                    return b[campo] - a[campo]
+                } else if (tipoOrdenacao == "desc") {
+                    return a[campo] - b[campo]
+                }
+            });
+        }
+
         montarTabelaNaTela(lancamentos)
         if (tipoOrdenacao == "desc") {
             $(this).attr('data-order', "asc")
