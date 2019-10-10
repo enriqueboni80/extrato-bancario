@@ -14,6 +14,16 @@ Date.prototype.isValid = function () {
     return !(this == "Invalid Date") ? true : false
 };
 
+function setMascaras() {
+    $('input[name=form-data]').mask('00/00/0000');
+}
+
+function setNovoId() {
+    novoID = localStorage.getItem("last_id")
+    novoID++
+    localStorage.setItem("last_id", novoID)
+}
+
 function soma(valor) {
     return total += valor
 }
@@ -34,6 +44,54 @@ function getValor(obj) {
 
 function getNumRegistro(obj) {
     return parseInt(obj.find('.numero-registro').html());
+}
+
+function converteDataParaIngles(data) {
+    let dataString
+    dataString = data.split("/")
+    return new Date(dataString[2], dataString[1] - 1, dataString[0])
+}
+
+function converteDataParaPortugues(data) {
+    let dataString
+    let dia
+    dataString = data.split("-")
+    dia = dataString[2].split("T")[0]
+    return dia + '/' + dataString[1] + '/' + dataString[0]
+}
+
+function converteMoedaPTparaUS(valor) {
+    return valor.replace(',', '.');
+}
+
+function converteMoedaUSparaPT(valor) {
+    valorConvertido = valor.toString()
+    return valorConvertido.replace('.', ',');
+}
+
+function imprimirErroValidacaoNoFormulario(errosValidacao) {
+    limparFormErros()
+    if (errosValidacao.descricao) {
+        $('input[name=form-descricao]').addClass('form-error')
+        $('input[name=form-descricao]').after('<p> *Esse campo não pode ser vazio</p>')
+    }
+    if (errosValidacao.valor) {
+        $('input[name=form-valor]').addClass('form-error')
+        $('input[name=form-valor]').after('<p> *Esse campo precisa ser numério</p>')
+    }
+    if (errosValidacao.data) {
+        $('input[name=form-data]').addClass('form-error')
+        $('input[name=form-data]').after('<p> *A data precisa ser válida</p>')
+    }
+}
+
+function limparFormErros() {
+    $('input[name=form-descricao]').removeClass('form-error')
+    $('input[name=form-valor]').removeClass('form-error')
+    $('input[name=form-data]').removeClass('form-error')
+    $('input[name=form-descricao]').next().remove()
+    $('input[name=form-valor]').next().remove()
+    $('input[name=form-data]').next().remove()
 }
 
 function limparForm() {
@@ -58,73 +116,12 @@ function acaoBotaoEditar() {
     })
 }
 
-function deletarRegistro(numeroRegistro) {
-    lancamentos = getLancamentos()
-    $.each(lancamentos, function (index) {
-        if (this.codigo == numeroRegistro) {
-            lancamentos.splice(index, 1)
-            localStorage.setItem('lancamentos', JSON.stringify(lancamentos))
-        }
-    })
-    montarTabelaNaTela()
-}
-
 function getLancamentos() {
     lancamentos = JSON.parse(localStorage.getItem('lancamentos'))
     if (lancamentos == null) {
         return lancamentos = []
     }
     return lancamentos
-}
-
-function setNovoId() {
-    novoID = localStorage.getItem("last_id")
-    novoID++
-    localStorage.setItem("last_id", novoID)
-}
-
-function converteDataParaIngles(data) {
-    let dataString
-    dataString = data.split("/")
-    return new Date(dataString[2], dataString[1] - 1, dataString[0])
-}
-
-function converteDataParaPortugues(data) {
-    let dataString
-    let dia
-    dataString = data.split("-")
-    dia = dataString[2].split("T")[0]
-    return dia + '/' + dataString[1] + '/' + dataString[0]
-}
-
-function setMascaras() {
-    $('input[name=form-data]').mask('00/00/0000');
-}
-
-function limparFormErros() {
-    $('input[name=form-descricao]').removeClass('form-error')
-    $('input[name=form-valor]').removeClass('form-error')
-    $('input[name=form-data]').removeClass('form-error')
-    $('input[name=form-descricao]').next().remove()
-    $('input[name=form-valor]').next().remove()
-    $('input[name=form-data]').next().remove()
-}
-
-function imprimirErroValidacaoNoFormulario(errosValidacao) {
-
-    limparFormErros()
-    if (errosValidacao.descricao) {
-        $('input[name=form-descricao]').addClass('form-error')
-        $('input[name=form-descricao]').after('<p> *Esse campo não pode ser vazio</p>')
-    }
-    if (errosValidacao.valor) {
-        $('input[name=form-valor]').addClass('form-error')
-        $('input[name=form-valor]').after('<p> *Esse campo precisa ser numério</p>')
-    }
-    if (errosValidacao.data) {
-        $('input[name=form-data]').addClass('form-error')
-        $('input[name=form-data]').after('<p> *A data precisa ser válida</p>')
-    }
 }
 
 function validaLancamento(lancamento) {
@@ -146,16 +143,7 @@ function validaLancamento(lancamento) {
     return true
 }
 
-function converteMoedaPTparaUS(valor) {
-    return valor.replace(',', '.');
-}
-
-function converteMoedaUSparaPT(valor) {
-    valorConvertido = valor.toString()
-    return valorConvertido.replace('.', ',');
-}
-
-function gravarNovoLancamento(lancamento) {
+function gravarNovoLancamento() {
     lancamentos = getLancamentos()
     setNovoId()
     lancamento = {
@@ -191,6 +179,19 @@ function gravarEdicaoLancamento() {
     }
     return false
 }
+
+function deletarRegistro(numeroRegistro) {
+    lancamentos = getLancamentos()
+    $.each(lancamentos, function (index) {
+        if (this.codigo == numeroRegistro) {
+            lancamentos.splice(index, 1)
+            localStorage.setItem('lancamentos', JSON.stringify(lancamentos))
+        }
+    })
+    montarTabelaNaTela()
+}
+
+
 
 function editarRegistro(numeroRegistro) {
     lancamentos = getLancamentos()
