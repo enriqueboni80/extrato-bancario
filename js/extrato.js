@@ -29,7 +29,7 @@ function atualizaSaldo(total, obj) {
 }
 
 function getValor(obj) {
-    return parseFloat(obj.find('.valor').html());
+    return obj.find('.valor').html();
 }
 
 function getNumRegistro(obj) {
@@ -165,7 +165,7 @@ function gravarNovoLancamento(lancamento) {
         data: converteDataParaIngles($('input[name=form-data]').val()),
         codigo: novoID,
         descricao: $('input[name=form-descricao]').val(),
-        valor: parseFloat($('input[name=form-valor]').val())
+        valor: parseFloat(converteMoedaPTparaUS($('input[name=form-valor]').val()))
     }
     if (validaLancamento(lancamento)) {
         lancamentos.push(lancamento)
@@ -183,7 +183,7 @@ function gravarEdicaoLancamento() {
                 data: converteDataParaIngles($('input[name=form-data]').val()),
                 codigo: numeroRegistro,
                 descricao: $('input[name=form-descricao]').val(),
-                valor: parseFloat($('input[name=form-valor]').val())
+                valor: parseFloat(converteMoedaPTparaUS($('input[name=form-valor]').val()))
             }
             lancamentos[index] = lancamento
         }
@@ -202,12 +202,10 @@ function editarRegistro(numeroRegistro) {
             $("input[name=form-id]").val(this.codigo)
             $("input[name=form-data]").val(converteDataParaPortugues(this.data))
             $("input[name=form-descricao]").val(this.descricao)
-            $("input[name=form-valor]").val(this.valor)
+            $("input[name=form-valor]").val(converteMoedaUSparaPT(this.valor))
         }
     })
 }
-
-
 
 function montarBotaoAcoes(registro, obj) {
     let acoes = `
@@ -237,7 +235,7 @@ function montarTabelaNaTela(lancamentos = null) {
                <td>${converteDataParaPortugues(this.data)}</td>
                 <td class="numero-registro">${this.codigo}</td>
                 <td>${this.descricao}</td>
-                <td class="valor">${this.valor}</td>
+                <td class="valor">${converteMoedaUSparaPT(this.valor)}</td>
                 <td class="saldo"></td>
                 <td class="acoes"></td>
             </tr>`
@@ -251,11 +249,11 @@ function main() {
     total = 0
     valor = 0
     $(".extrato-item").each(function () {
-        valor = getValor($(this))
+        valor = parseFloat(converteMoedaPTparaUS(getValor($(this))))
         numeroRegistro = getNumRegistro($(this))
         VerificaSeEhNegativo(valor, $(this))
         soma(valor)
-        atualizaSaldo(total, $(this))
+        atualizaSaldo(converteMoedaUSparaPT(total), $(this))
         montarBotaoAcoes(numeroRegistro, $(this))
     })
 }
