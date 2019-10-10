@@ -78,7 +78,7 @@ function imprimirErroValidacaoNoFormulario(errosValidacao) {
     }
     if (errosValidacao.valor) {
         $('input[name=form-valor]').addClass('form-error')
-        $('input[name=form-valor]').after('<p> *Esse campo precisa ser numério</p>')
+        $('input[name=form-valor]').after('<p> *Esse campo precisa ser numérico</p>')
     }
     if (errosValidacao.data) {
         $('input[name=form-data]').addClass('form-error')
@@ -117,12 +117,40 @@ function acaoBotaoEditar() {
     })
 }
 
-function getLancamentos() {
-    lancamentos = JSON.parse(localStorage.getItem('lancamentos'))
-    if (lancamentos == null) {
-        return lancamentos = []
-    }
-    return lancamentos
+function montarBotaoAcoes(registro, obj) {
+    let acoes = `
+    <button onclick="editarRegistro(${registro})" type="button" 
+    class="btn btn-warning btn-sm btn-edit-lancamento" 
+    data-toggle="modal" data-target="#modal-form-lancamento">
+    <i class="fas fa-edit"></i>
+    </button>
+
+    <button onclick="deletarRegistro(${registro})" type="button" 
+    class="btn btn-danger btn-sm btn-delete-lancamento">
+    <i class="fas fa-eraser"></i>
+    </button >
+    `
+    obj.find('.acoes').html(acoes)
+}
+
+function montarTabelaNaTela(lancamentos = null) {
+    retornoLancamentos = ((lancamentos == null) ? getLancamentos() : lancamentos)
+    //limpar a tela extrato
+    $("#extrato").html("")
+    $.each(retornoLancamentos, function () {
+        $("#extrato").append(
+            `<tr class='extrato-item'>
+               <td>${converteDataParaPortugues(this.data)}</td>
+                <td class="numero-registro">${this.codigo}</td>
+                <td>${this.descricao}</td>
+                <td class="valor">${converteMoedaUSparaPT(this.valor)}</td>
+                <td class="saldo"></td>
+                <td class="acoes"></td>
+            </tr>`
+        )
+    })
+    main()
+    acaoBotaoEditar()
 }
 
 function validaLancamento(lancamento) {
@@ -143,7 +171,6 @@ function validaLancamento(lancamento) {
     limparFormErros()
     return true
 }
-
 
 function gravarLancamento(novo = false) {
     lancamentos = getLancamentos()
@@ -169,15 +196,12 @@ function gravarLancamento(novo = false) {
     return false
 }
 
-function deletarRegistro(numeroRegistro) {
-    lancamentos = getLancamentos()
-    $.each(lancamentos, function (index) {
-        if (this.codigo == numeroRegistro) {
-            lancamentos.splice(index, 1)
-            localStorage.setItem('lancamentos', JSON.stringify(lancamentos))
-        }
-    })
-    montarTabelaNaTela()
+function getLancamentos() {
+    lancamentos = JSON.parse(localStorage.getItem('lancamentos'))
+    if (lancamentos == null) {
+        return lancamentos = []
+    }
+    return lancamentos
 }
 
 function editarRegistro(numeroRegistro) {
@@ -192,42 +216,15 @@ function editarRegistro(numeroRegistro) {
     })
 }
 
-function montarBotaoAcoes(registro, obj) {
-    let acoes = `
-    <button onclick="editarRegistro(${registro})" type="button" 
-    class="btn btn-warning btn-sm btn-edit-lancamento" 
-    data-toggle="modal" data-target="#modal-form-lancamento">
-    <i class="fas fa-edit"></i>
-    </button>
-
-    <button onclick="deletarRegistro(${registro})" type="button" 
-    class="btn btn-danger btn-sm btn-delete-lancamento">
-    <i class="fas fa-eraser"></i>
-    </button >
-    `
-    obj.find('.acoes').html(acoes)
-}
-
-function montarTabelaNaTela(lancamentos = null) {
-
-    retornoLancamentos = ((lancamentos == null) ? getLancamentos() : lancamentos)
-
-    //limpar a tela extrato
-    $("#extrato").html("")
-    $.each(retornoLancamentos, function () {
-        $("#extrato").append(
-            `<tr class='extrato-item'>
-               <td>${converteDataParaPortugues(this.data)}</td>
-                <td class="numero-registro">${this.codigo}</td>
-                <td>${this.descricao}</td>
-                <td class="valor">${converteMoedaUSparaPT(this.valor)}</td>
-                <td class="saldo"></td>
-                <td class="acoes"></td>
-            </tr>`
-        )
+function deletarRegistro(numeroRegistro) {
+    lancamentos = getLancamentos()
+    $.each(lancamentos, function (index) {
+        if (this.codigo == numeroRegistro) {
+            lancamentos.splice(index, 1)
+            localStorage.setItem('lancamentos', JSON.stringify(lancamentos))
+        }
     })
-    main()
-    acaoBotaoEditar()
+    montarTabelaNaTela()
 }
 
 function main() {
@@ -254,14 +251,6 @@ function enviarForm() {
         montarTabelaNaTela()
     })
 }
-
-$(document).ready(function () {
-    acaoBotaoNovo()
-    montarTabelaNaTela()
-    enviarForm()
-    ordernarArray()
-    setMascaras()
-})
 
 function ordernarArray() {
     let tipoOrdenacao
@@ -298,3 +287,11 @@ function ordernarArray() {
         montarTabelaNaTela(lancamentos)
     })
 }
+
+$(document).ready(function () {
+    acaoBotaoNovo()
+    montarTabelaNaTela()
+    enviarForm()
+    ordernarArray()
+    setMascaras()
+})
