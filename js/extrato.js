@@ -22,6 +22,7 @@ function setNovoId() {
     novoID = localStorage.getItem("last_id")
     novoID++
     localStorage.setItem("last_id", novoID)
+    return localStorage.getItem("last_id")
 }
 
 function soma(valor) {
@@ -143,36 +144,24 @@ function validaLancamento(lancamento) {
     return true
 }
 
-function gravarNovoLancamento() {
+
+function gravarLancamento(novo = false) {
     lancamentos = getLancamentos()
-    setNovoId()
+    ID = (novo) ? setNovoId() : numeroRegistro
     lancamento = {
         data: converteDataParaIngles($('input[name=form-data]').val()),
-        codigo: novoID,
+        codigo: ID,
         descricao: $('input[name=form-descricao]').val(),
         valor: parseFloat(converteMoedaPTparaUS($('input[name=form-valor]').val()))
     }
-    if (validaLancamento(lancamento)) {
-        lancamentos.push(lancamento)
-        localStorage.setItem('lancamentos', JSON.stringify(lancamentos))
-        return true
-    }
-    return false
-}
-
-function gravarEdicaoLancamento() {
-    lancamentos = getLancamentos()
     $.each(lancamentos, function (index) {
         if (this.codigo == numeroRegistro) {
-            lancamento = {
-                data: converteDataParaIngles($('input[name=form-data]').val()),
-                codigo: numeroRegistro,
-                descricao: $('input[name=form-descricao]').val(),
-                valor: parseFloat(converteMoedaPTparaUS($('input[name=form-valor]').val()))
-            }
             lancamentos[index] = lancamento
         }
     })
+    if (novo) {
+        lancamentos.push(lancamento)
+    }
     if (validaLancamento(lancamento)) {
         localStorage.setItem('lancamentos', JSON.stringify(lancamentos))
         return true
@@ -190,8 +179,6 @@ function deletarRegistro(numeroRegistro) {
     })
     montarTabelaNaTela()
 }
-
-
 
 function editarRegistro(numeroRegistro) {
     lancamentos = getLancamentos()
@@ -257,17 +244,12 @@ function main() {
 }
 
 function enviarForm() {
+    let novoLancamento
     $("#btn-enviar-form").click(function () {
         numeroRegistro = $("input[name=form-id]").val()
-        if (numeroRegistro == "") {
-            if (gravarNovoLancamento()) {
-                $("#modal-form-lancamento").modal('hide')
-            }
-        }
-        else {
-            if (gravarEdicaoLancamento()) {
-                $("#modal-form-lancamento").modal('hide')
-            }
+        novoLancamento = (numeroRegistro == "") ? true : false
+        if (gravarLancamento(novoLancamento)) {
+            $("#modal-form-lancamento").modal('hide')
         }
         montarTabelaNaTela()
     })
