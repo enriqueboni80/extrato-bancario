@@ -99,9 +99,7 @@ function converteDataParaPortugues(data) {
 
 function setMascaras() {
     $('input[name=form-data]').mask('00/00/0000');
-    $('input[name=form-valor]').mask('#.##0,00', { reverse: true });
 }
-
 
 function limparFormErros() {
     $('input[name=form-descricao]').removeClass('form-error')
@@ -147,7 +145,6 @@ function validaLancamento(lancamento) {
     limparFormErros()
     return true
 }
-
 
 function converteMoedaPTparaUS(valor) {
     return valor.replace(',', '.');
