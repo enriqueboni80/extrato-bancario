@@ -97,8 +97,9 @@ function converteDataParaPortugues(data) {
     return dia + '/' + dataString[1] + '/' + dataString[0]
 }
 
-function setMascaras(){
+function setMascaras() {
     $('input[name=form-data]').mask('00/00/0000');
+    $('input[name=form-valor]').mask('#.##0,00', { reverse: true });
 }
 
 
@@ -147,6 +148,16 @@ function validaLancamento(lancamento) {
     return true
 }
 
+
+function converteMoedaPTparaUS(valor) {
+    return valor.replace(',', '.');
+}
+
+function converteMoedaUSparaPT(valor) {
+    valorConvertido = valor.toString()
+    return valorConvertido.replace('.', ',');
+}
+
 function gravarNovoLancamento(lancamento) {
     lancamentos = getLancamentos()
     setNovoId()
@@ -162,18 +173,6 @@ function gravarNovoLancamento(lancamento) {
         return true
     }
     return false
-}
-
-function editarRegistro(numeroRegistro) {
-    lancamentos = getLancamentos()
-    $.each(lancamentos, function (index) {
-        if (this.codigo == numeroRegistro) {
-            $("input[name=form-id]").val(this.codigo)
-            $("input[name=form-data]").val(converteDataParaPortugues(this.data))
-            $("input[name=form-descricao]").val(this.descricao)
-            $("input[name=form-valor]").val(this.valor)
-        }
-    })
 }
 
 function gravarEdicaoLancamento() {
@@ -195,6 +194,20 @@ function gravarEdicaoLancamento() {
     }
     return false
 }
+
+function editarRegistro(numeroRegistro) {
+    lancamentos = getLancamentos()
+    $.each(lancamentos, function (index) {
+        if (this.codigo == numeroRegistro) {
+            $("input[name=form-id]").val(this.codigo)
+            $("input[name=form-data]").val(converteDataParaPortugues(this.data))
+            $("input[name=form-descricao]").val(this.descricao)
+            $("input[name=form-valor]").val(this.valor)
+        }
+    })
+}
+
+
 
 function montarBotaoAcoes(registro, obj) {
     let acoes = `
@@ -256,7 +269,7 @@ function enviarForm() {
             }
         }
         else {
-            if(gravarEdicaoLancamento()){
+            if (gravarEdicaoLancamento()) {
                 $("#modal-form-lancamento").modal('hide')
             }
         }
