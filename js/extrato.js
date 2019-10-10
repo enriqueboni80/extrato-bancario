@@ -97,6 +97,10 @@ function converteDataParaPortugues(data) {
     return dia + '/' + dataString[1] + '/' + dataString[0]
 }
 
+function setMascaras(){
+    $('input[name=form-data]').mask('00/00/0000');
+}
+
 
 function limparFormErros() {
     $('input[name=form-descricao]').removeClass('form-error')
@@ -265,10 +269,7 @@ $(document).ready(function () {
     montarTabelaNaTela()
     enviarForm()
     ordernarArray()
-
-    $('input[name=form-data]').mask('00/00/0000');
-
-
+    setMascaras()
 })
 
 function ordernarArray() {
