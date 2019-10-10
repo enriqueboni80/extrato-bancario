@@ -265,6 +265,10 @@ $(document).ready(function () {
     montarTabelaNaTela()
     enviarForm()
     ordernarArray()
+
+    $('input[name=form-data]').mask('00/00/0000');
+
+
 })
 
 function ordernarArray() {
