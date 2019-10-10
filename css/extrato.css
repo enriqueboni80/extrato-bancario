@@ -5,3 +5,7 @@
 .form-error{
     border-color: red
 }
+
+.numero-negativo{
+    color:red
+}

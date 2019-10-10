@@ -14,14 +14,13 @@ Date.prototype.isValid = function () {
     return !(this == "Invalid Date") ? true : false
 };
 
-
 function soma(valor) {
     return total += valor
 }
 
 function VerificaSeEhNegativo(valor, obj) {
     if (valor < 0) {
-        return obj.find('.valor').css('color', 'red')
+        return obj.find('.valor').addClass("numero-negativo")
     }
 }
 
@@ -38,16 +37,25 @@ function getNumRegistro(obj) {
 }
 
 function limparForm() {
-    $("#btn-novo-lancamento").click(function () {
-        $("input[name=form-id]").val('')
-        $("input[name=form-data]").val('')
-        $("input[name=form-descricao]").val('')
-        $("input[name=form-valor]").val('')
-    })
+    $("input[name=form-id]").val('')
+    $("input[name=form-data]").val('')
+    $("input[name=form-descricao]").val('')
+    $("input[name=form-valor]").val('')
 }
 
 function acaoBotaoNovo() {
-    limparForm()
+    $("#btn-novo-lancamento").click(function () {
+        limparForm()
+        $('.modal-title').html('Cadastrar')
+        $('#btn-enviar-form').html('Cadastrar')
+    })
+}
+
+function acaoBotaoEditar() {
+    $(".btn-edit-lancamento").click(function () {
+        $('.modal-title').html('Alterar')
+        $('#btn-enviar-form').html('Alterar')
+    })
 }
 
 function deletarRegistro(numeroRegistro) {
@@ -215,6 +223,7 @@ function montarTabelaNaTela(lancamentos = null) {
         )
     })
     main()
+    acaoBotaoEditar()
 }
 
 function main() {
