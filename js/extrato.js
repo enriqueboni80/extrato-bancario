@@ -155,7 +155,9 @@ function gravarNovoLancamento(lancamento) {
     if (validaLancamento(lancamento)) {
         lancamentos.push(lancamento)
         localStorage.setItem('lancamentos', JSON.stringify(lancamentos))
+        return true
     }
+    return false
 }
 
 function editarRegistro(numeroRegistro) {
@@ -185,7 +187,9 @@ function gravarEdicaoLancamento() {
     })
     if (validaLancamento(lancamento)) {
         localStorage.setItem('lancamentos', JSON.stringify(lancamentos))
+        return true
     }
+    return false
 }
 
 function montarBotaoAcoes(registro, obj) {
@@ -243,10 +247,14 @@ function enviarForm() {
     $("#btn-enviar-form").click(function () {
         numeroRegistro = $("input[name=form-id]").val()
         if (numeroRegistro == "") {
-            gravarNovoLancamento()
+            if (gravarNovoLancamento()) {
+                $("#modal-form-lancamento").modal('hide')
+            }
         }
         else {
-            gravarEdicaoLancamento()
+            if(gravarEdicaoLancamento()){
+                $("#modal-form-lancamento").modal('hide')
+            }
         }
         montarTabelaNaTela()
     })
